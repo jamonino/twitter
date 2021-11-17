@@ -19,14 +19,13 @@ public class addUser {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addUser(User user) throws SQLException{   
-
-            
+    public Response addUser(User user){  
+        try{
             Db myDb = new Db();
             myDb.connect();
             
             PreparedStatement ps = myDb.prepareStatement(
-                    "INSERT INTO users (name, pass) VALUES ('?', '?') returning id;"
+                    "INSERT INTO users (name, pass) VALUES (?, ?) returning id;"
             );
             ps.setString(1, user.getName());
             ps.setString(2, user.getPass());
@@ -41,6 +40,11 @@ public class addUser {
             r.setUser(u);
             r.setResponseCode(1);
             return r;   
+        }catch(Exception e){
+            Response r = new Response();
+            r.setResponseCode(0);
+            return r;   
+        }
     }    
 }
 
