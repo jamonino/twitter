@@ -21,6 +21,10 @@ public class getUser {
         try{
             user.setId(JWTUtils.checkJWTandGetUserId(user.getToken()));
             Response r = new Response();
+            
+            
+            
+            
             r.setUser(Parameters.users.get(user.getId()));
             r.setResponseCode(1);
             return r;

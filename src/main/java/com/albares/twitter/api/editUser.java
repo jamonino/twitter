@@ -1,6 +1,7 @@
 package com.albares.twitter.api;
 
 import com.albares.twitter.db.User;
+import com.albares.twitter.utils.Db;
 import com.albares.twitter.utils.JWTUtils;
 import com.albares.twitter.utils.Parameters;
 import com.albares.twitter.utils.Response;
@@ -9,6 +10,8 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 @Path("/editUser")
 public class editUser {
@@ -19,7 +22,21 @@ public class editUser {
     public Response editUser(User user){  
         try{
             user.setId(JWTUtils.checkJWTandGetUserId(user.getToken()));
-            Parameters.users.get(user.getId()).setName(user.getName());
+            
+            //Parameters.users.get(user.getId()).setName(user.getName());
+            
+            Db myDb = new Db();
+            myDb.connect();
+            
+            PreparedStatement ps = myDb.prepareStatement(
+                    "UPDATE users SET name = ? WHERE id = ?;"
+            );
+            ps.setString(1, user.getName());
+            ps.setInt(2, user.getId());
+            ps.executeUpdate();
+            
+            
+            
             Response r = new Response();
             r.setResponseCode(1);
             return r;
