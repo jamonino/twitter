@@ -7,7 +7,7 @@ public class DbPool {
     private final BasicDataSource dataSource;
     private static DbPool instance = null;
 
-    public DbPool(String user, String pass, String url){
+    private DbPool(String user, String pass, String url){
         dataSource = new BasicDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
         dataSource.setUsername(user);

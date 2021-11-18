@@ -12,7 +12,6 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 @Path("/addUser")
 public class addUser {
@@ -28,16 +27,17 @@ public class addUser {
                     "INSERT INTO users (name, pass) VALUES (?, ?) returning id;"
             );
             ps.setString(1, user.getName());
-            ps.setString(2, user.getPass());
+            ps.setString(2, user.getEncodedPass());
             ResultSet rs = myDb.executeQuery(ps);
             
-            User u = new User();
-            while(rs.next()){
-                u.setToken(JWTUtils.generateToken(rs.getInt(1)));
-            }
+            User userResponse = new User();
+            
+            rs.next();
+            userResponse.setToken(JWTUtils.generateToken(rs.getInt(1)));
+            
             Response r = new Response();
             
-            r.setUser(u);
+            r.setUser(userResponse);
             r.setResponseCode(1);
             return r;   
         }catch(Exception e){

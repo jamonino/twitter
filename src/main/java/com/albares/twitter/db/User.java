@@ -1,7 +1,13 @@
 
 package com.albares.twitter.db;
 
+import static com.albares.twitter.utils.SHAUtils.sha256;
+import com.albares.twitter.utils.Secrets;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import java.security.NoSuchAlgorithmException;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
     private Integer id;
     private String name;
@@ -47,6 +53,9 @@ public class User {
         this.token = token;
     }
     
-    
+    @JsonIgnore //Esta variable no aparece en el JSON de Jackson
+    public String getEncodedPass() throws NoSuchAlgorithmException{
+        return sha256(this.getPass()+Secrets.SALT_PASS);
+    }
     
 }
