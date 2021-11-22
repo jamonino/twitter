@@ -3,7 +3,6 @@ package com.albares.twitter.api;
 import com.albares.twitter.db.User;
 import com.albares.twitter.utils.Db;
 import com.albares.twitter.utils.JWTUtils;
-import com.albares.twitter.utils.Parameters;
 import com.albares.twitter.utils.Response;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -11,7 +10,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 @Path("/editUser")
 public class editUser {
@@ -28,13 +26,9 @@ public class editUser {
             Db myDb = new Db();
             myDb.connect();
             
-            PreparedStatement ps = myDb.prepareStatement(
-                    "UPDATE users SET name = ? WHERE id = ?;"
-            );
-            ps.setString(1, user.getName());
-            ps.setInt(2, user.getId());
-            ps.executeUpdate();
+            user.updateName_DB(myDb);
             
+            myDb.disconnect();
             
             
             Response r = new Response();

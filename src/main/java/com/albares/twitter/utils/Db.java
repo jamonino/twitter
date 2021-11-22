@@ -62,4 +62,8 @@ public class Db {
     }
     
     
+    public void executUpdate(PreparedStatement ps) throws SQLException{
+        ps.executeUpdate();
+    }
+    
 }

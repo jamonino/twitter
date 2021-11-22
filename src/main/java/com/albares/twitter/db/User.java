@@ -1,11 +1,16 @@
 
 package com.albares.twitter.db;
 
+import com.albares.twitter.utils.Db;
+import com.albares.twitter.utils.JWTUtils;
 import static com.albares.twitter.utils.SHAUtils.sha256;
 import com.albares.twitter.utils.Secrets;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.security.NoSuchAlgorithmException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
@@ -57,5 +62,30 @@ public class User {
     public String getEncodedPass() throws NoSuchAlgorithmException{
         return sha256(this.getPass()+Secrets.SALT_PASS);
     }
+    
+    public int insertAndGetId_DB(Db myDb) throws SQLException, NoSuchAlgorithmException{
+        PreparedStatement ps = myDb.prepareStatement(
+                    "INSERT INTO users (name, pass) VALUES (?, ?) returning id;"
+            );
+            ps.setString(1, this.getName());
+            ps.setString(2, this.getEncodedPass());
+            ResultSet rs = myDb.executeQuery(ps);
+            rs.next();
+            this.setId(rs.getInt(1));
+            return this.getId();
+    }
+    
+    public void updateName_DB(Db myDb) throws SQLException{
+    
+        PreparedStatement ps = myDb.prepareStatement(
+                    "UPDATE users SET name = ? WHERE id = ?;"
+            );
+        ps.setString(1, this.getName());
+        ps.setInt(2, this.getId());
+        myDb.executUpdate(ps);
+    }
+    
+    
+    
     
 }

@@ -5,6 +5,7 @@ import com.albares.twitter.db.User;
 import com.albares.twitter.utils.Db;
 import com.albares.twitter.utils.JWTUtils;
 import com.albares.twitter.utils.Response;
+import com.albares.twitter.utils.ResponseCodes;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -21,28 +22,21 @@ public class addUser {
     public Response addUser(User user){  
         try{
             Db myDb = new Db();
+
             myDb.connect();
-            
-            PreparedStatement ps = myDb.prepareStatement(
-                    "INSERT INTO users (name, pass) VALUES (?, ?) returning id;"
-            );
-            ps.setString(1, user.getName());
-            ps.setString(2, user.getEncodedPass());
-            ResultSet rs = myDb.executeQuery(ps);
-            
+            user.setToken(JWTUtils.generateToken(user.insertAndGetId_DB(myDb)));
+            myDb.disconnect();
+
             User userResponse = new User();
-            
-            rs.next();
-            userResponse.setToken(JWTUtils.generateToken(rs.getInt(1)));
+            userResponse.setToken(user.getToken());
             
             Response r = new Response();
-            
             r.setUser(userResponse);
-            r.setResponseCode(1);
+            r.setResponseCode(ResponseCodes.OK);
             return r;   
         }catch(Exception e){
             Response r = new Response();
-            r.setResponseCode(0);
+            r.setResponseCode(ResponseCodes.ERROR);
             return r;   
         }
     }    
