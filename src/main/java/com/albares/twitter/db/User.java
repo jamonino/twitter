@@ -85,6 +85,19 @@ public class User {
         myDb.executUpdate(ps);
     }
     
+    public void selectNamePass_DB(Db myDb) throws SQLException{
+        PreparedStatement ps = myDb.prepareStatement(
+                    "SELECT name,pass FROM users WHERE id = ?;"
+            );
+        ps.setInt(1, this.getId());
+        ResultSet rs = myDb.executeQuery(ps);
+
+        rs.next();
+
+        this.setName(rs.getString(1));
+        this.setPass(rs.getString(2));
+    }
+    
     
     
     

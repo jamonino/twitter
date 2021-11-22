@@ -4,6 +4,7 @@ import com.albares.twitter.db.User;
 import com.albares.twitter.utils.Db;
 import com.albares.twitter.utils.JWTUtils;
 import com.albares.twitter.utils.Response;
+import com.albares.twitter.utils.ResponseCodes;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -32,11 +33,11 @@ public class editUser {
             
             
             Response r = new Response();
-            r.setResponseCode(1);
+            r.setResponseCode(ResponseCodes.OK);
             return r;
         }catch(Exception e){
             Response r = new Response();
-            r.setResponseCode(0);
+            r.setResponseCode(ResponseCodes.ERROR);
             return r;
         }
         
